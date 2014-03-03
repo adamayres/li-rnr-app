@@ -21,15 +21,6 @@ npm install -g gulp yeoman
 # Create and go into folder where you want to store the Lithium code
 mkdir lia; cd lia
 
-# Clone the LDKn branch
-git clone https://github.com/lithiumtech/LDKn.git
-
-# Install npm dependencies in LDKn
-cd ldkn; npm install
-
-# Go back to lia folder
-cd ..
-
 # Clone the li-rnr-app branch
 git clone https://github.com/lithiumtech/li-rnr-app.git
 
