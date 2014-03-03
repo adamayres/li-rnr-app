@@ -15,8 +15,8 @@ ulimit -n 10000
 4.) After change the `.bash_profile` start a new terminal and run the following commands:
 
 ```bash
-# Install gulp and yeoman globally
-npm install -g gulp yeoman
+# Install gulp globally
+npm install -g
 
 # Create and go into folder where you want to store the Lithium code
 mkdir lia; cd lia
