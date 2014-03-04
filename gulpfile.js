@@ -10,7 +10,6 @@ var clean = require('gulp-clean');
 var karma = require('gulp-karma');
 var lrServer = require('tiny-lr')();
 var livereload = require('gulp-livereload');
-var config = require('./config/config');
 
 var scriptsTask = function (src, file) {
   return gulp.src(src)
@@ -48,6 +47,7 @@ var scriptsTask = function (src, file) {
 gulp.task('default', ['app']);
 
 gulp.task('app', ['scripts', 'styles'], function (cb) {
+  var config = require('./config/config');
   var app = require('./server/server');
   app();
   nodeOpen('http://localhost:' + config.port);
