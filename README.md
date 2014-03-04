@@ -15,8 +15,8 @@ ulimit -n 10000
 4.) Start a new terminal and run the following commands:
 
 ```bash
-# Install gulp globally
-npm install -g
+# Install gulp globally and node-sass locally
+npm install -g; npm install node-sass
 
 # Create and go into folder where you want to store the Lithium code
 mkdir lia; cd lia
