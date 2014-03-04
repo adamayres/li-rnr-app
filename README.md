@@ -40,5 +40,5 @@ gulp
 [depstat-image]: https://david-dm.org/lithiumtech/li-rnr-app.png
 
 
-[codeship-url]: https://www.codeship.io/
-[codeship-image]: https://www.codeship.io/projects/d8436310-85a1-0131-0cc1-4ef271363d26/status
+[codeship-url]: https://www.codeship.io/projects/15170
+[codeship-image]: https://www.codeship.io/projects/d8436310-85a1-0131-0cc1-4ef271363d26/status?branch=master
