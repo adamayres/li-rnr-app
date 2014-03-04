@@ -3,11 +3,14 @@
 var koa = require('koa');
 var serve = require('koa-static');
 var views = require('koa-views');
+var livereload = require('koa-livereload');
 var config = require('../config/config');
 var app = koa();
 
 module.exports = function() {
   app.use(serve('./.tmp'));
+
+  app.use(livereload());
 
   app.use(views('./server/views', 'html', {
     html: 'underscore'

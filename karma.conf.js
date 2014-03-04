@@ -5,21 +5,11 @@ module.exports = function(config) {
     // base path, that will be used to resolve files and exclude
     basePath: './',
 
-    frameworks: ['jasmine','commonjs'],
+    frameworks: ['jasmine', 'commonjs'],
 
     // list of files / patterns to load in the browser
     files: [
-      'bower_components/jquery/jquery.js',
-      'bower_components/angular/angular.js',
-      'bower_components/angular-resource/angular-resource.js',
-      'bower_components/angular-sanitize/angular-sanitize.js',
-      'bower_components/angular-route/angular-route.js',
-      'bower_components/angular-ui-bootstrap-bower/ui-bootstrap-tpls.js',
-      'bower_components/angular-translate/angular-translate.js',
-      'bower_components/angular-translate-loader-partial/angular-translate-loader-partial.js',
-      'bower_components/angular-mocks/angular-mocks.js',
-      'bower_components/angular-scenario/angular-scenario.js',
-      'src/**/*.js'
+      '.tmp/spec.js'
     ],
 
     // list of files to exclude
@@ -41,10 +31,10 @@ module.exports = function(config) {
     },
 
     thresholdReporter: {
-      statements: 0,
-      branches: 0,
-      functions: 0,
-      lines: 0
+      statements: 100,
+      branches: 100,
+      functions: 100,
+      lines: 100
     },
 
     coverageReporter: {

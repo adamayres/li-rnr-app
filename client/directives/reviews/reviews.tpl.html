@@ -1,0 +1,8 @@
+<ul>
+  {{reviews}}
+  <li ng-repeat="review in reviews">
+    <h2 ng-bind="review.subject"></h2>
+    <article ng-bind="review.body"></article>
+    <strong>author:</strong><span ng-bind="review.author.username"></span>
+  </li>
+</ul>

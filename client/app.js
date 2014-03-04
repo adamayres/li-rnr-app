@@ -1,9 +1,13 @@
 'use strict';
 
-require('angular/angular');
-require('angular-route/angular-route');
+var angular = require('angular');
+require('angular-route');
+require('./module');
 
-var app = angular.module('li.rnr-app', ['ngRoute']);
+var app = angular.module('li.rnr-app', [
+  'ngRoute',
+  'li.rnr.directives.reviews'
+]);
 
 app.config(['$routeProvider', function($routeProvider) {
   $routeProvider
@@ -13,3 +17,4 @@ app.config(['$routeProvider', function($routeProvider) {
       redirectTo: '/'
     });
 }]);
+
