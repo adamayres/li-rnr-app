@@ -12,7 +12,7 @@ alias node='node --harmony'
 alias gulp='node --harmony `which gulp`'
 ulimit -n 10000
 ```
-4.) After change the `.bash_profile` start a new terminal and run the following commands:
+4.) Start a new terminal and run the following commands:
 
 ```bash
 # Install gulp globally
