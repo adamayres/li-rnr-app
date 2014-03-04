@@ -15,11 +15,13 @@
     "gulp-browserify": "^0.4.6"
   },
   "engines": {
-    "node": ">=0.8.0"
+    "node": ">=0.11.10",
+    "npm": ">=1.4.4"
   },
   "scripts": {
     "install": "napa",
-    "start": "gulp app"
+    "start": "node node_modules/gulp/bin/gulp app",
+    "postinstall": "node node_modules/bower/bin/bower install"
   },
   "repository": {
     "type": "git",
