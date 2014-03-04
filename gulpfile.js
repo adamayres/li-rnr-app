@@ -8,6 +8,7 @@ var partialify = require('partialify');
 var concat = require('gulp-concat');
 var clean = require('gulp-clean');
 var karma = require('gulp-karma');
+var sass = require('gulp-sass');
 var lrServer = require('tiny-lr')();
 var livereload = require('gulp-livereload');
 var app = require('./server/server');
@@ -48,7 +49,7 @@ var scriptsTask = function (src, file) {
 
 gulp.task('default', ['app']);
 
-gulp.task('app', ['scripts'], function (cb) {
+gulp.task('app', ['scripts', 'styles'], function (cb) {
   app();
   nodeOpen('http://localhost:' + config.port);
 
@@ -79,6 +80,14 @@ gulp.task('test', ['scripts-spec'], function () {
       configFile: './karma.conf.js',
       action: 'run'
     }));
+});
+
+gulp.task('styles', function () {
+  return gulp.src('client/module.scss')
+    .pipe(sass({
+      includePaths: []
+    }))
+    .pipe(gulp.dest('.tmp'));
 });
 
 gulp.task('clean', function () {
