@@ -1,6 +1,6 @@
-## li-rnr-app
+[![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url]  [![Coverage Status][coveralls-image]][coveralls-url] [![Dependency Status][depstat-image]][depstat-url]
 
-Lithium RnR Application
+> Lithium RnR Application
 
 ### Install
 
@@ -30,3 +30,11 @@ cd li-rnr-app; npm install; bower install
 # Run the app using the default command of gulp
 gulp
 ```
+[travis-url]: http://travis-ci.org/lithiumtech/li-rnr-app
+[travis-image]: https://secure.travis-ci.org/lithiumtech/li-rnr-app.png?branch=master
+
+[coveralls-url]: https://coveralls.io/r/lithiumtech/li-rnr-app
+[coveralls-image]: https://coveralls.io/repos/lithiumtech/li-rnr-app/badge.png
+
+[depstat-url]: https://david-dm.org/adamayres/lithiumtech/li-rnr-app
+[depstat-image]: https://david-dm.org/lithiumtech/li-rnr-app.png
