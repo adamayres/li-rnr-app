@@ -8,7 +8,6 @@ var partialify = require('partialify');
 var concat = require('gulp-concat');
 var clean = require('gulp-clean');
 var karma = require('gulp-karma');
-var sass = require('gulp-sass');
 var lrServer = require('tiny-lr')();
 var livereload = require('gulp-livereload');
 var config = require('./config/config');
@@ -83,6 +82,7 @@ gulp.task('test', ['scripts-spec'], function () {
 });
 
 gulp.task('styles', function () {
+  var sass = require('gulp-sass');
   return gulp.src('client/module.scss')
     .pipe(sass({
       includePaths: []
