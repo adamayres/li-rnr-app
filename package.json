@@ -51,7 +51,7 @@
     "install": "napa",
     "start": "node node_modules/gulp/bin/gulp app",
     "postinstall": "node node_modules/bower/bin/bower install",
-    "test": "gulp test"
+    "test": "node --harmony `which gulp` test"
   },
   "napa": {
     "angular": "angular/bower-angular",
