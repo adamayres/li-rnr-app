@@ -1,4 +1,4 @@
-[![Build Status][travis-image]][travis-url]  [![Coverage Status][coveralls-image]][coveralls-url] [![Dependency Status][depstat-image]][depstat-url]
+[![Build Status][travis-image]][travis-url]  [![Coverage Status][coveralls-image]][coveralls-url] [![Dependency Status][depstat-image]][depstat-url] [![Codeship][codeship-image]][codeship-url]
 
 > Lithium RnR Application
 
@@ -38,3 +38,7 @@ gulp
 
 [depstat-url]: https://david-dm.org/adamayres/lithiumtech/li-rnr-app
 [depstat-image]: https://david-dm.org/lithiumtech/li-rnr-app.png
+
+
+[codeship-url]: https://www.codeship.io/
+[codeship-image]: https://www.codeship.io/projects/d8436310-85a1-0131-0cc1-4ef271363d26/status
