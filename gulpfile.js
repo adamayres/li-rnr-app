@@ -10,45 +10,39 @@ var clean = require('gulp-clean');
 var karma = require('gulp-karma');
 var lrServer = require('tiny-lr')();
 var livereload = require('gulp-livereload');
+var sass = require('gulp-sass');
+var prettyTime = require('pretty-hrtime');
+var config = require('./config/config');
+var app = require('./server/server');
 
-var scriptsTask = function (src, file) {
+var scriptsTask = function (src, file, browserifyConfig) {
   return gulp.src(src)
     //.pipe(require('gulp-filelog')())
-    .pipe(browserify({
-      insertGlobals : true,
-      debug : true,
-      shim: {
-        angular: {
-          path: 'bower_components/angular/angular.js',
-          exports: 'angular'
-        },
-        'angular-route': {
-          path: 'bower_components/angular-route/angular-route.js',
-          exports: 'ngRoute',
-          depends: {
-            angular: 'angular'
-          }
-        },
-        'angular-mocks': {
-          path: 'bower_components/angular-mocks/angular-mocks.js',
-          exports: 'ngMocks',
-          depends: {
-            angular: 'angular'
-          }
-        }
-      },
-      transform: [partialify]
-    }))
+    .pipe(browserify(browserifyConfig))
     .pipe(concat(file))
     .pipe(gulp.dest('.tmp'))
     .pipe(livereload(lrServer));
 };
 
+function mainBrowserifyConfig () {
+  return {
+    //insertGlobals : true,
+    //debug : true,
+    alias: [
+      'bower_components/angular/angular.js:angular',
+      'bower_components/angular-route/angular-route.js:angular-route'
+    ],
+    external: [
+      'angular',
+      'angular-route'
+    ],
+    transform: [partialify]
+  };
+}
+
 gulp.task('default', ['app']);
 
 gulp.task('app', ['scripts', 'styles'], function (cb) {
-  var config = require('./config/config');
-  var app = require('./server/server');
   app();
   nodeOpen('http://localhost:' + config.port);
 
@@ -59,18 +53,61 @@ gulp.task('app', ['scripts', 'styles'], function (cb) {
   });
 
   gulp.watch(['client/**/!(*.demo|*.spec|*.mock|*.config).js', 'client/**/*.tpl.html'], function () {
-    scriptsTask('client/**/!(*.demo|*.spec|*.mock|*.config).js');
+    var startTime, totalTime, stream;
+    startTime = process.hrtime();
+    stream = scriptsTask('client/app.js', 'app.js', mainBrowserifyConfig());
+    stream.on('finish', function () {
+      totalTime = prettyTime(process.hrtime(startTime));
+      gutil.log('Finished', '\'' + gutil.colors.cyan('reload') + '\'', 'in', gutil.colors.magenta(totalTime));
+    });
   });
 
   cb();
 });
 
-gulp.task('scripts', function() {
-  return scriptsTask('client/app.js', 'app.js');
+gulp.task('scripts', ['scripts-libs'], function() {
+  return scriptsTask('client/app.js', 'app.js', mainBrowserifyConfig());
 });
 
-gulp.task('scripts-spec', function() {
-  return scriptsTask('client/spec.js', 'spec.js');
+gulp.task('scripts-libs', function () {
+  return scriptsTask([
+    'client/libs.js'
+  ], 'libs.js', {
+    insertGlobals : true,
+    debug : true,
+    shim: {
+      angular: {
+        path: 'bower_components/angular/angular.js',
+        exports: 'angular'
+      },
+      'angular-route': {
+        path: 'bower_components/angular-route/angular-route.js',
+        exports: 'ngRoute',
+        depends: {
+          angular: 'angular'
+        }
+      }
+    }
+  });
+});
+
+gulp.task('scripts-spec', ['scripts-libs'], function() {
+  return scriptsTask('client/spec.js', 'spec.js', {
+    external: [
+      'angular',
+      'angular-route'
+    ],
+    transform: [partialify],
+    shim: {
+      'angular-mocks': {
+        path: 'bower_components/angular-mocks/angular-mocks.js',
+        exports: 'ngMocks',
+        depends: {
+          angular: 'angular'
+        }
+      }
+    }
+  });
 });
 
 gulp.task('test', ['scripts-spec'], function () {
@@ -82,7 +119,6 @@ gulp.task('test', ['scripts-spec'], function () {
 });
 
 gulp.task('styles', function () {
-  var sass = require('gulp-sass');
   return gulp.src('client/module.scss')
     .pipe(sass({
       includePaths: []
