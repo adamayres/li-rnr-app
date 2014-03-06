@@ -1,26 +1,41 @@
 'use strict';
 
-var koa = require('koa');
-var serve = require('koa-static');
-var views = require('koa-views');
-var livereload = require('koa-livereload');
+var engines = require('consolidate');
 var config = require('../config/config');
-var app = koa();
+var connectLr = require('connect-livereload');
+var express = require('express');
+var app = express();
 
 module.exports = function() {
-  app.use(serve('./.tmp'));
+  /**
+   * Add livereload
+   *
+   * TODO(adamayres): Make the livereload conditional of development mode
+   */
+  app.use(connectLr());
 
-  app.use(livereload());
+  /**
+   * Serve the .tmp folder
+   */
+  app.use(express.static('./.tmp'));
 
-  app.use(views('./server/views', 'html', {
-    html: 'underscore'
-  }));
+  /**
+   * Use the underscore library for templating
+   * and setup the views folder as the base for
+   * the server side templates.
+   */
+  app.engine('html', engines.lodash);
+  app.set('view engine', 'html');
+  app.set('views', __dirname + '/views');
 
-  app.use(function* (next) {
-    yield this.render('index.html', config);
+  /**
+   * Handle the root request
+   */
+  app.get('/', function (req, res){
+    res.render('index', config);
   });
 
   app.listen(config.port);
-  console.log('Listening on port 3000');
+  console.log('Listening on port ' + config.port);
   return app;
 };
