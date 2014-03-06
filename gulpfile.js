@@ -15,19 +15,25 @@ var prettyTime = require('pretty-hrtime');
 var config = require('./config/config');
 var app = require('./server/server');
 
-var scriptsTask = function (src, file, browserifyConfig) {
+function scriptsTask (src, file, dest, browserifyConfig) {
   return gulp.src(src)
-    //.pipe(require('gulp-filelog')())
     .pipe(browserify(browserifyConfig))
     .pipe(concat(file))
-    .pipe(gulp.dest('.tmp'))
+    .pipe(gulp.dest(dest))
     .pipe(livereload(lrServer));
-};
+}
+
+function stlyesTask (src, dest) {
+  return gulp.src(src)
+    .pipe(sass())
+    .pipe(gulp.dest(dest))
+    .pipe(livereload(lrServer));
+}
 
 function mainBrowserifyConfig () {
   return {
-    //insertGlobals : true,
-    //debug : true,
+    insertGlobals : true,
+    debug : true,
     alias: [
       'bower_components/angular/angular.js:angular',
       'bower_components/angular-route/angular-route.js:angular-route'
@@ -36,43 +42,77 @@ function mainBrowserifyConfig () {
       'angular',
       'angular-route'
     ],
-    transform: [partialify]
+    transform: ['partialify']
   };
 }
 
+function streamTimer (taskFunc) {
+  var startTime, totalTime, stream;
+  startTime = process.hrtime();
+  stream = taskFunc();
+  stream.on('finish', function () {
+    totalTime = prettyTime(process.hrtime(startTime));
+    gutil.log('Finished', '\'' + gutil.colors.cyan('reload') + '\'', 'in', gutil.colors.magenta(totalTime));
+  });
+}
+
+/**
+ * Set the default task to run the app
+ */
 gulp.task('default', ['app']);
 
+/**
+ * Start the application and apply file watchers
+ */
 gulp.task('app', ['scripts', 'styles'], function (cb) {
   app();
   nodeOpen('http://localhost:' + config.port);
 
+  /**
+   * Start the livereload server
+   */
   lrServer.listen(35729, function (err) {
     if (err) {
       return gutil.log(err);
     }
   });
 
-  gulp.watch(['client/**/!(*.demo|*.spec|*.mock|*.config).js', 'client/**/*.tpl.html'], function () {
-    var startTime, totalTime, stream;
-    startTime = process.hrtime();
-    stream = scriptsTask('client/app.js', 'app.js', mainBrowserifyConfig());
-    stream.on('finish', function () {
-      totalTime = prettyTime(process.hrtime(startTime));
-      gutil.log('Finished', '\'' + gutil.colors.cyan('reload') + '\'', 'in', gutil.colors.magenta(totalTime));
+  /**
+   * Watch script files to trigger recompile
+   */
+  gulp.watch(['client/**/!(*.demo|*.spec|*.mock).js', 'client/**/*.tpl.html'], function () {
+    streamTimer(function () {
+      return scriptsTask('client/app.js', 'app.js', '.tmp', mainBrowserifyConfig());
+    });
+  });
+
+  /**
+   * Watch styles files to trigger recompile
+   */
+  gulp.watch('client/**/*.scss', function () {
+    console.log('reload styles');
+    streamTimer(function () {
+      return stlyesTask('client/module.scss', '.tmp');
     });
   });
 
   cb();
 });
 
+/**
+ * Compile JavaScript for app
+ */
 gulp.task('scripts', ['scripts-libs'], function() {
-  return scriptsTask('client/app.js', 'app.js', mainBrowserifyConfig());
+  return scriptsTask('client/app.js', 'app.js', '.tmp', mainBrowserifyConfig());
 });
 
+/**
+ * Compile JavaScript for external libraries
+ */
 gulp.task('scripts-libs', function () {
   return scriptsTask([
     'client/libs.js'
-  ], 'libs.js', {
+  ], 'libs.js', '.tmp', {
     insertGlobals : true,
     debug : true,
     shim: {
@@ -91,8 +131,11 @@ gulp.task('scripts-libs', function () {
   });
 });
 
+/**
+ * Compile JavaScript for karma spec tests
+ */
 gulp.task('scripts-spec', ['scripts-libs'], function() {
-  return scriptsTask('client/spec.js', 'spec.js', {
+  return scriptsTask('client/spec.js', 'spec.js', '.tmp', {
     external: [
       'angular',
       'angular-route'
@@ -110,22 +153,27 @@ gulp.task('scripts-spec', ['scripts-libs'], function() {
   });
 });
 
+/**
+ * Run the karma spec tests
+ */
 gulp.task('test', ['scripts-spec'], function () {
-  gulp.src('DO_NOT_MATCH') //use the files in the karma.conf.js
+  return gulp.src('DO_NOT_MATCH') //use the files in the karma.conf.js
     .pipe(karma({
       configFile: './karma.conf.js',
       action: 'run'
     }));
 });
 
+/**
+ * Compile the styles
+ */
 gulp.task('styles', function () {
-  return gulp.src('client/module.scss')
-    .pipe(sass({
-      includePaths: []
-    }))
-    .pipe(gulp.dest('.tmp'));
+  return stlyesTask('client/module.scss', '.tmp');
 });
 
+/**
+ * Delete the .tmp directory
+ */
 gulp.task('clean', function () {
-  gulp.src('.tmp').pipe(clean());
+  return gulp.src('.tmp').pipe(clean());
 });
