@@ -32,10 +32,12 @@ module.exports = function() {
    * Handle the root request
    */
   app.get('/', function (req, res){
-    res.render('index', config);
+    res.render('index', {
+      app: config.get('app')
+    });
   });
 
-  app.listen(config.port);
-  console.log('Listening on port ' + config.port);
+  app.listen(config.get('port'));
+  console.log('Listening on port ' + config.get('port'));
   return app;
 };

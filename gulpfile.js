@@ -69,7 +69,7 @@ gulp.task('default', ['app']);
  */
 gulp.task('app', ['scripts', 'styles'], function (cb) {
   app();
-  nodeOpen('http://localhost:' + config.port);
+  nodeOpen('http://localhost:' + config.get('port'));
 
   /**
    * Start the livereload server
