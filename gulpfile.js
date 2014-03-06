@@ -12,6 +12,9 @@ var lrServer = require('tiny-lr')();
 var livereload = require('gulp-livereload');
 var sass = require('gulp-sass');
 var prettyTime = require('pretty-hrtime');
+var touch = require('touch');
+var Q = require('q');
+var fs = require('fs');
 var config = require('./config/config');
 var app = require('./server/server');
 
@@ -75,24 +78,24 @@ gulp.task('app', ['scripts', 'styles'], function (cb) {
     if (err) {
       return gutil.log(err);
     }
-  });
 
-  /**
-   * Watch script files to trigger recompile
-   */
-  gulp.watch(['client/**/!(*.demo|*.spec|*.mock).js', 'client/**/*.tpl.html'], function () {
-    streamTimer(function () {
-      return scriptsTask('client/app.js', 'app.js', '.tmp', mainBrowserifyConfig());
+    /**
+     * Watch script files to trigger recompile
+     */
+    gulp.watch(['client/**/!(*.demo|*.spec|*.mock).js', 'client/**/*.tpl.html'], function () {
+      streamTimer(function () {
+        return scriptsTask('client/app.js', 'app.js', '.tmp', mainBrowserifyConfig());
+      });
     });
-  });
 
-  /**
-   * Watch styles files to trigger recompile
-   */
-  gulp.watch('client/**/*.scss', function () {
-    console.log('reload styles');
-    streamTimer(function () {
-      return stlyesTask('client/module.scss', '.tmp');
+    /**
+     * Watch styles files to trigger recompile
+     */
+    gulp.watch('client/**/*.scss', function () {
+      console.log('reload styles');
+      streamTimer(function () {
+        return stlyesTask('client/module.scss', '.tmp');
+      });
     });
   });
 
@@ -110,25 +113,32 @@ gulp.task('scripts', ['scripts-libs'], function() {
  * Compile JavaScript for external libraries
  */
 gulp.task('scripts-libs', function () {
-  return scriptsTask([
-    'client/libs.js'
-  ], 'libs.js', '.tmp', {
-    insertGlobals : true,
-    debug : true,
-    shim: {
-      angular: {
-        path: 'bower_components/angular/angular.js',
-        exports: 'angular'
-      },
-      'angular-route': {
-        path: 'bower_components/angular-route/angular-route.js',
-        exports: 'ngRoute',
-        depends: {
-          angular: 'angular'
+  var deferred = Q.defer();
+  touch('libs.js', {}, function () {
+    var stream = scriptsTask('libs.js', 'libs.js', '.tmp', {
+      insertGlobals : true,
+      debug : true,
+      shim: {
+        angular: {
+          path: 'bower_components/angular/angular.js',
+          exports: 'angular'
+        },
+        'angular-route': {
+          path: 'bower_components/angular-route/angular-route.js',
+          exports: 'ngRoute',
+          depends: {
+            angular: 'angular'
+          }
         }
       }
-    }
+    });
+
+    stream.on('finish', function () {
+      fs.unlink('libs.js');
+      deferred.resolve();
+    });
   });
+  return deferred.promise;
 });
 
 /**
