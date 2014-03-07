@@ -16,7 +16,6 @@ var touch = require('touch');
 var Q = require('q');
 var fs = require('fs');
 var config = require('./config/config');
-var app = require('./server/server');
 
 function scriptsTask (src, file, dest, browserifyConfig) {
   return gulp.src(src)
@@ -68,7 +67,7 @@ gulp.task('default', ['app']);
  * Start the application and apply file watchers
  */
 gulp.task('app', ['scripts', 'styles'], function (cb) {
-  app();
+  require('./server');
   nodeOpen('http://localhost:' + config.get('port'));
 
   /**
@@ -82,19 +81,19 @@ gulp.task('app', ['scripts', 'styles'], function (cb) {
     /**
      * Watch script files to trigger recompile
      */
-    gulp.watch(['client/**/!(*.demo|*.spec|*.mock).js', 'client/**/*.tpl.html'], function () {
+    gulp.watch(['public/**/!(*.demo|*.spec|*.mock).js', 'public/**/*.tpl.html'], function () {
       streamTimer(function () {
-        return scriptsTask('client/app.js', 'app.js', '.tmp', mainBrowserifyConfig());
+        return scriptsTask('public/app.js', 'app.js', '.tmp', mainBrowserifyConfig());
       });
     });
 
     /**
      * Watch styles files to trigger recompile
      */
-    gulp.watch('client/**/*.scss', function () {
+    gulp.watch('public/**/*.scss', function () {
       console.log('reload styles');
       streamTimer(function () {
-        return stlyesTask('client/module.scss', '.tmp');
+        return stlyesTask('public/module.scss', '.tmp');
       });
     });
   });
@@ -106,7 +105,7 @@ gulp.task('app', ['scripts', 'styles'], function (cb) {
  * Compile JavaScript for app
  */
 gulp.task('scripts', ['scripts-libs'], function() {
-  return scriptsTask('client/app.js', 'app.js', '.tmp', mainBrowserifyConfig());
+  return scriptsTask('public/app.js', 'app.js', '.tmp', mainBrowserifyConfig());
 });
 
 /**
@@ -145,7 +144,7 @@ gulp.task('scripts-libs', function () {
  * Compile JavaScript for karma spec tests
  */
 gulp.task('scripts-spec', ['scripts-libs'], function() {
-  return scriptsTask('client/spec.js', 'spec.js', '.tmp', {
+  return scriptsTask('public/spec.js', 'spec.js', '.tmp', {
     external: [
       'angular',
       'angular-route'
@@ -178,7 +177,7 @@ gulp.task('test', ['scripts-spec'], function () {
  * Compile the styles
  */
 gulp.task('styles', function () {
-  return stlyesTask('client/module.scss', '.tmp');
+  return stlyesTask('public/module.scss', '.tmp');
 });
 
 /**

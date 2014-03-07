@@ -4,7 +4,6 @@ var fs = require('fs');
 var path = require('path');
 var nconf = require('nconf');
 var logger = require('winston');
-var util = require('util');
 var merge = require('merge');
 var userName = process.env.USER || process.env.USERNAME || process.env.LOGNAME;
 var configPaths = [];
@@ -23,7 +22,7 @@ env = nconf.get('NODE_ENV');
 /**
  * Load defaults in /config/env/all.json
  */
-configPaths.push(__dirname + '/env/all.json')
+configPaths.push(__dirname + '/env/all.json');
 
 /**
  * Load config files specified by NODE_ENV arg or env (NODE_ENV=production OR --NODE_ENV=production)
@@ -31,7 +30,8 @@ configPaths.push(__dirname + '/env/all.json')
 configPaths.push( __dirname + '/env/' + env + '.json');
 
 /**
- * Load config for files specified by configs arg or env (configs=../abc.json,foo.json OR --configs=../abc.json,foo.json)
+ * Load config for files specified by configs arg or env
+ * (configs=../abc.json,foo.json OR --configs=../abc.json,foo.json)
  */
 if (nconf.get('configs')) {
   configPaths.contact(nconf.get('configs').split(','));
