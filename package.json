@@ -52,7 +52,7 @@
   },
   "scripts": {
     "start": "node node_modules/gulp/bin/gulp app",
-    "postinstall": "node node_modules/bower/bin/bower install",
+    "postinstall": "node node_modules/bower/bin/bower install --config.interactive=false",
     "test": "node --harmony `which gulp` test"
   },
   "repository": {
