@@ -22,7 +22,11 @@ env = nconf.get('NODE_ENV');
 /**
  * Load defaults in /config/env/all.json
  */
-configPaths.push(__dirname + '/env/all.json');
+if (!(typeof env === 'undefined')){
+  configPaths.push(__dirname + '/env/all.json');
+} else {
+  logger.info("no env specified, not attempting to load env");
+}
 
 /**
  * Load config files specified by NODE_ENV arg or env (NODE_ENV=production OR --NODE_ENV=production)
@@ -34,11 +38,13 @@ configPaths.push( __dirname + '/env/' + env + '.json');
  * (configs=../abc.json,foo.json OR --configs=../abc.json,foo.json)
  */
 if (nconf.get('configs')) {
-  configPaths.contact(nconf.get('configs').split(','));
+  configPaths = configPaths.concat(nconf.get('configs').split(','));
 }
 
 /**
  * Load config file for current user
+ *
+ * TODO: we probably want to remove this in favor of having the engineer specify the local config in the --configs arg
  */
 configPaths.push(__dirname + '/local/local.' + userName + '.json');
 
