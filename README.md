@@ -18,10 +18,12 @@ mkdir lia; cd lia
 # Clone the li-rnr-app branch
 git clone https://github.com/lithiumtech/li-rnr-app.git
 
-# Install the npm dependencies in li-rnr-app
+# Install the npm dependencies in li-rnr-app (dependencies are stored in li-rnr-app folder)
 cd li-rnr-app; npm install;
 
-# Run the app using the default command of gulp
+# Add port to config/local/local.username.json file like:   "port":3000,
+
+# Run the app using the default command gulp (/path/to/li-rnr-app/node_modules/.bin)
 gulp
 ```
 
