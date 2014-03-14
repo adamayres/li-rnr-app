@@ -22,16 +22,16 @@ env = nconf.get('NODE_ENV');
 /**
  * Load defaults in /config/env/all.json
  */
+configPaths.push(__dirname + '/env/all.json');
+
 if (!(typeof env === 'undefined')){
-  configPaths.push(__dirname + '/env/all.json');
+   /**
+    * Load config files specified by NODE_ENV arg or env (NODE_ENV=production OR --NODE_ENV=production)
+    */
+  configPaths.push( __dirname + '/env/' + env + '.json');	
 } else {
   logger.info("no env specified, not attempting to load env");
 }
-
-/**
- * Load config files specified by NODE_ENV arg or env (NODE_ENV=production OR --NODE_ENV=production)
- */
-configPaths.push( __dirname + '/env/' + env + '.json');
 
 /**
  * Load config for files specified by configs arg or env
