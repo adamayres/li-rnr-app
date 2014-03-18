@@ -11,6 +11,7 @@ var karma = require('gulp-karma');
 var lrServer = require('tiny-lr')();
 var livereload = require('gulp-livereload');
 var sass = require('gulp-sass');
+var nodemon = require('gulp-nodemon');
 var prettyTime = require('pretty-hrtime');
 var touch = require('touch');
 var Q = require('q');

@@ -4,7 +4,7 @@ var engines = require('consolidate');
 var config = require('./config/config');
 var connectLr = require('connect-livereload');
 var express = require('express');
-var https = require('https');
+//var https = require('https');
 var http = require('http');
 var app = express();
 
@@ -21,13 +21,9 @@ app.set('view engine', 'html');
 app.set('views', __dirname + '/app/views');
 
 /**
- * Handle the root request
+ * Add the routes
  */
-app.get('/', function (req, res){
-  res.render('index', {
-    app: config.get('app')
-  });
-});
+require('./app/routes/index')(app);
 
 http.createServer(app).listen(config.get('port'), function() {
   console.log('Listening on port %d', config.get('port'));

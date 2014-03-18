@@ -17,7 +17,7 @@
     "phantomjs": "^1.9.7-1",
     "open": "0.0.4",
     "tiny-lr": "0.0.5",
-    "gulp": "~3.4.0",
+    "gulp": "~3.5.6",
     "gulp-util": "^2.2.14",
     "gulp-concat": "^2.1.7",
     "gulp-clean": "^0.2.4",
